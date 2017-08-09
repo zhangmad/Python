@@ -5,7 +5,8 @@
 #from urllib import request, parse
 #from bs4 import BeautifulSoup
 #import re, ssl
-import pymysql, time, datetime
+from datetime import *
+import pymysql, time
 
 domain = ('sina.com.cn','leju.com')
 site = ('esf','zufang','m')
@@ -25,13 +26,10 @@ conn = pymysql.connect(
     charset = 'utf8'
     )
 
-date_end = time.localtime()
+date_end = date.today()
 
-#cursor = conn.cursor()
-#cursor_dict = conn.cursor(cursor = pymysql.cursors.DictCursor)
-
-#cursor.close()
-#conn.close()
+cursor = conn.cursor()
+cursor_dict = conn.cursor(cursor = pymysql.cursors.DictCursor)
 
 
 while 1:
@@ -48,21 +46,42 @@ while 1:
 #    finally:  
 #        print("Goodbye!")
 
-#print(date_start)
-print(date_num)
-print(date_end)
+url_dict = {}
+site_domain_dict = {}
 
-date_end_temp = time.localtime()[0:3]
-print(date_end_temp)
-d2 = datetime.date(date_end_temp)
-d = datetime.timedelta(days = date_num)
-d1 = d2 + d
-
-print(d2,'===',d,'===',d1)
+cursor.execute('select Type from indexed_dict group by type')
+temp = cursor.fetchone()
+for i in temp:
+    
 
 
 
 
 
+date_start = date_end - timedelta(days = date_num - 1 )
 
+cursor_dict.execute('select Site, Domain, URL, Indexed, Date from indexed where Date >= %s and Date <= %s order by Date',(date_start, date_end))
 
+a = 0
+b = 0
+
+while a < cursor_dict.rowcount:
+    a += 1
+    r_one = cursor_dict.fetchone()
+    r_date = r_one['Date']
+    r_url = r_one['URL']
+    r_name = r_one['Site']+'.'+r_one['Domain']
+    r_indexed = r_one['Indexed']
+    print(str(a)+':',r_date, r_url, r_name, r_indexed)
+    if r_url in url_dict:
+        pass
+    else:
+        b += 1
+        
+    
+
+print('ok!')
+
+cursor.close()
+cursor_dict.close()
+conn.close()
