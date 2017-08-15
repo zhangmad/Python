@@ -46,13 +46,23 @@ while 1:
 #    finally:  
 #        print("Goodbye!")
 
+type_list = []
 url_dict = {}
 site_domain_dict = {}
 
 cursor.execute('select Type from indexed_dict group by type')
-temp = cursor.fetchone()
+temp = cursor.fetchall()
 for i in temp:
-    
+    x = i[0]
+    type_list.append(x)
+    cursor.execute('select value, Is_mobile from indexed_dict where type = %s order by Order_num' , (x))
+    temp_1 = cursor.fetchall()
+    for a in temp_1:
+        
+
+
+
+print(type_list)
 
 
 

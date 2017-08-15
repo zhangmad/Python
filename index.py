@@ -101,7 +101,7 @@ for result_s in result:
     row_count = cursor.rowcount
     if row_count == 0:
         result_insert.append(result_s)
-        cursor.execute('insert into indexed(URL,Site,Domain,Indexed,Date) values(%s,%s,%s,%s,curtime())', (result_s))
+        cursor.execute('insert into indexed(URL,Site,Domain,Indexed,Date) values(%s,%s,%s,%s,curdate())', (result_s))
         if cursor.rowcount == 1: 
             print('插入数据库 ok') 
             num_insert += 1
