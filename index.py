@@ -19,8 +19,8 @@ url = (
         )
 
 conn = pymysql.connect(
-    host = '127.0.0.1',
-    port = 3306,
+    host = 'www.zhangmad.com',
+    port = 3310,
     user = 'test',
     password = '1234abcd',
     db = 'test',
