@@ -12,14 +12,14 @@ ssl._create_default_https_context = ssl._create_unverified_context
 domain = ('sina.com.cn','leju.com')
 site = ('esf','zufang','m')
 url = (
-        'http://www.baidu.com/s?wd=',
-        'http://www.so.com/s?q=',
-        'http://www.sogou.com/web?query=',
-        'http://so.m.sm.cn/s?q='
+        'https://www.baidu.com/s?wd=',
+        'https://www.so.com/s?q=',
+        'https://www.sogou.com/web?ie=utf8&query=',
+        'https://so.m.sm.cn/s?q='
         )
 
 conn = pymysql.connect(
-    host = 'www.zhangmad.com',
+    host = '127.0.0.1',
     port = 3306,
     user = 'test',
     password = '1234abcd',
@@ -47,7 +47,8 @@ def search_site(site, pc=1):
         req.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0")
     else:
         req.add_header("User-Agent","Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1")
-    resp = request.urlopen(req).read().decode('utf-8')
+    resp = request.urlopen(req).read()[1000:].decode('UTF-8')
+#    print(resp[:100])
     return resp
 
 
@@ -59,8 +60,10 @@ def all_site(resp_all):
 
     for text_single in text_all:
         text_new = str(text_single.get_text()).strip().replace('\n','').replace(' ','').replace(',','')
-        if re.match(r'^神马收录', text_new) or re.match(r'^搜狗已为您找到约', text_new) or re.match(r'^找到相关结果', text_new) or re.match(r'^该网站共有', text_new):
+        if re.match(r'^神马收录', text_new) or re.match(r'^找到约', text_new) or re.match(r'^找到相关结果', text_new) or re.match(r'^该网站共有', text_new):
+#            print(text_new)
             number = int(re.search(r'\d+',text_new).group(0))
+#            print(number)
             return number
     
 
@@ -80,11 +83,11 @@ for url_s in url:
             elif site_s != 'm':
                 site_link = url_s+'site:'+site_s+'.'+domain_s
                 num = all_site(search_site(site_link))
-                if re.match(r'http://.*baidu', url_s):
+                if re.match(r'https://.*baidu', url_s):
                     url_s_new = 'www.baidu.com'
-                elif re.match(r'http://.*so\.com', url_s):
+                elif re.match(r'https://.*so\.com', url_s):
                     url_s_new = 'www.so.com'
-                elif re.match(r'http://.*sogou', url_s):
+                elif re.match(r'https://.*sogou', url_s):
                     url_s_new = 'www.sogou.com'
                 t = (url_s_new, site_s, domain_s, num)
                 result.append(t)

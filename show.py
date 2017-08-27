@@ -50,21 +50,16 @@ type_list = []
 url_dict = {}
 site_domain_dict = {}
 
-cursor.execute('select Type from indexed_dict group by type')
-temp = cursor.fetchall()
-for i in temp:
-    x = i[0]
-    type_list.append(x)
-    cursor.execute('select value, Is_mobile from indexed_dict where type = %s order by Order_num' , (x))
-    temp_1 = cursor.fetchall()
-    for a in temp_1:
+cursor.execute('select * from search_engine order by Order_num')
+search_engine = cursor.fetchall()
         
 
+print(search_engine)
 
+cursor.execute('select * from site_dict order by Order_num')
+site_dict = cursor.fetchall()
 
-print(type_list)
-
-
+print(site_dict)
 
 
 
@@ -74,6 +69,7 @@ cursor_dict.execute('select Site, Domain, URL, Indexed, Date from indexed where 
 
 a = 0
 b = 0
+indexed_list = []
 
 while a < cursor_dict.rowcount:
     a += 1
@@ -82,13 +78,14 @@ while a < cursor_dict.rowcount:
     r_url = r_one['URL']
     r_name = r_one['Site']+'.'+r_one['Domain']
     r_indexed = r_one['Indexed']
-    print(str(a)+':',r_date, r_url, r_name, r_indexed)
+    indexed_list.append((str(a)+':',r_date, r_url, r_name, r_indexed))
+#    print(indexed_list)
     if r_url in url_dict:
         pass
     else:
         b += 1
-        
-    
+
+print(indexed_list)
 
 print('ok!')
 
