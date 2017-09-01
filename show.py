@@ -6,6 +6,7 @@
 #from bs4 import BeautifulSoup
 #import re, ssl
 from datetime import *
+from prettytable import PrettyTable
 import pymysql, time
 
 domain = ('sina.com.cn','leju.com')
@@ -42,35 +43,20 @@ while 1:
             date_num=int(s)
             break
     except ValueError as err:  
-        print(err)  
+        print(err)
 #    finally:  
 #        print("Goodbye!")
 
-type_list = []
-url_dict = {}
-site_domain_dict = {}
-
-cursor.execute('select * from search_engine order by Order_num')
-search_engine = cursor.fetchall()
-        
-
-print(search_engine)
-
-cursor.execute('select * from site_dict order by Order_num')
-site_dict = cursor.fetchall()
-
-print(site_dict)
-
-
 
 date_start = date_end - timedelta(days = date_num - 1 )
+date_temp = date_start
 
 cursor_dict.execute('select Site, Domain, URL, Indexed, Date from indexed where Date >= %s and Date <= %s order by Date',(date_start, date_end))
 
-a = 0
-b = 0
-indexed_list = []
 
+indexed_all = {}
+a = 0
+indexed_list = []
 while a < cursor_dict.rowcount:
     a += 1
     r_one = cursor_dict.fetchone()
@@ -78,14 +64,38 @@ while a < cursor_dict.rowcount:
     r_url = r_one['URL']
     r_name = r_one['Site']+'.'+r_one['Domain']
     r_indexed = r_one['Indexed']
-    indexed_list.append((str(a)+':',r_date, r_url, r_name, r_indexed))
+#    indexed_list.append((str(a)+':',r_date, r_url, r_name, r_indexed))
+    indexed_all[str(r_date)+':'+r_url+':'+r_name] = r_indexed
 #    print(indexed_list)
-    if r_url in url_dict:
-        pass
-    else:
-        b += 1
+print(indexed_all)
 
-print(indexed_list)
+while date_temp <= date_end:
+    print(date_temp)
+    date_temp = date_temp + timedelta(days = 1)
+#    cursor.execute('select * from indexed where Date = %s', (date_temp))
+
+
+#type_list = []
+#site_domain_dict = {}
+cursor.execute('select ID,Value,Is_mobile from search_engine order by Order_num')
+search_engine = cursor.fetchall()
+cursor.execute('select Type,Value,Is_mobile,Use_search_engine from site_dict order by Order_num')
+site_dict = cursor.fetchall()
+for i in search_engine:
+    pass
+
+print(search_engine)
+print(site_dict)
+
+
+x = PrettyTable(["name", "age", "sex", "money"])
+x.align["name"] = "l"  # 以name字段左对齐
+x.padding_width = 1   # 填充宽度
+x.add_row(["wang",20, "man", 1000])
+x.add_row(["alex",21, "man", 2000])
+x.add_row(["peiqi",22, "man", 3000])
+print(x) 
+
 
 print('ok!')
 

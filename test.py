@@ -29,9 +29,10 @@ a1_3 = cursor.fetchmany(2) # 获取剩余结果前n行数据
 cursor.scroll(0,mode='absolute') # 游标相对绝对位置移动
 a_all = cursor.fetchall() # 获取剩余结果所有数据
 a_dict = cursor_dict.fetchall()
+a_end = cursor_dict.fetchone()
 
 #insert_row = cursor.executemany('insert into test(name,number) values(%s,%s)', [('ttt','111'),('eee','222')]) #插入数据
-b = cursor.lastrowid #获取新插入数据的最新的自增id
+#b = cursor.lastrowid #获取新插入数据的最新的自增id
 
 
 print(conn)
@@ -41,10 +42,11 @@ print(a)
 print(a1_3)
 print(a_all)
 print(a_dict)
-print(b)
+#print(b)
+print(a_end)
 
 for a in a_dict:
-    print(key)
+    print(a)
     for key in a:
         print(key,a[str(key)])
 
