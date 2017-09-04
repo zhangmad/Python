@@ -1,22 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
-#from urllib import request, parse
-#from bs4 import BeautifulSoup
-#import re, ssl
 from datetime import *
 from prettytable import PrettyTable
 import pymysql, time
 
-domain = ('sina.com.cn','leju.com')
-site = ('esf','zufang','m')
-url = (
-        'http://www.baidu.com/s?wd=',
-        'http://www.so.com/s?q=',
-        'http://www.sogou.com/web?query=',
-        'http://so.m.sm.cn/s?q='
-        )
 
 conn = pymysql.connect(
     host = '127.0.0.1',
@@ -27,12 +15,11 @@ conn = pymysql.connect(
     charset = 'utf8'
     )
 
-date_end = date.today()
-
 cursor = conn.cursor()
 cursor_dict = conn.cursor(cursor = pymysql.cursors.DictCursor)
 
 
+#---输入查询天数---
 while 1:
     s=input("input the date number:")
     try:
@@ -47,53 +34,56 @@ while 1:
 #    finally:  
 #        print("Goodbye!")
 
-
+date_end = date.today()
 date_start = date_end - timedelta(days = date_num - 1 )
 date_temp = date_start
 
+
+#---根据指定日期生成数据dict模板和日期列表
+indexed_all = {}    #数据dict
+date_list = []  #日期列表
+while 1:
+    indexed_all[date_temp] = {}
+    date_list.append(date_temp)
+    if date_temp < date_end:
+        date_temp = date_temp + timedelta(days = 1)
+    else:
+        break
+
+
+#---查询指定日期的收录数据并插入数据dict---
 cursor_dict.execute('select Site, Domain, URL, Indexed, Date from indexed where Date >= %s and Date <= %s order by Date',(date_start, date_end))
+indexed_list = cursor_dict.fetchall()
+for i in indexed_list:
+        indexed_all[i['Date']][i['URL']+' '+'site:'+i['Site']+'.'+i['Domain']] = i['Indexed']
 
 
-indexed_all = {}
-a = 0
-indexed_list = []
-while a < cursor_dict.rowcount:
-    a += 1
-    r_one = cursor_dict.fetchone()
-    r_date = r_one['Date']
-    r_url = r_one['URL']
-    r_name = r_one['Site']+'.'+r_one['Domain']
-    r_indexed = r_one['Indexed']
-#    indexed_list.append((str(a)+':',r_date, r_url, r_name, r_indexed))
-    indexed_all[str(r_date)+':'+r_url+':'+r_name] = r_indexed
-#    print(indexed_list)
-print(indexed_all)
-
-while date_temp <= date_end:
-    print(date_temp)
-    date_temp = date_temp + timedelta(days = 1)
-#    cursor.execute('select * from indexed where Date = %s', (date_temp))
-
-
-#type_list = []
+#---建立表头---
+type_list = []  #用来定义显示顺序的表头字典列表
+field_list = [] #用来显示的表头内容
 #site_domain_dict = {}
-cursor.execute('select ID,Value,Is_mobile from search_engine order by Order_num')
+cursor.execute('select ID,Value,Sort_name from search_engine order by Order_num')
 search_engine = cursor.fetchall()
-cursor.execute('select Type,Value,Is_mobile,Use_search_engine from site_dict order by Order_num')
+cursor.execute('select Type,Value,Sort_name,Use_search_engine from site_dict order by Order_num')
 site_dict = cursor.fetchall()
-for i in search_engine:
-    pass
+for i_se in search_engine:
+    for i_sd in site_dict:
+        if i_se[0] in list(map(int,i_sd[3].split(','))):
+            type_list.append(i_se[1]+' '+i_sd[1])
+            field_list.append(i_se[2]+'-'+i_sd[0]+'-'+i_sd[2])
 
-print(search_engine)
-print(site_dict)
 
-
-x = PrettyTable(["name", "age", "sex", "money"])
-x.align["name"] = "l"  # 以name字段左对齐
-x.padding_width = 1   # 填充宽度
-x.add_row(["wang",20, "man", 1000])
-x.add_row(["alex",21, "man", 2000])
-x.add_row(["peiqi",22, "man", 3000])
+#--建立表格---
+field_list.insert(0,'Date')
+x = PrettyTable(field_list)
+x.align["Date"] = "l"  # 以name字段左对齐
+#x.padding_width = 1   # 填充宽度
+for i in date_list:
+    x_list = []
+    x_list.append(i)
+    for ii in type_list:
+        x_list.append(indexed_all[i][ii])
+    x.add_row(x_list)
 print(x) 
 
 
