@@ -3,7 +3,7 @@
 
 from datetime import *
 from prettytable import PrettyTable
-import pymysql, time
+import pymysql
 
 
 conn = pymysql.connect(
@@ -36,6 +36,7 @@ while 1:
 
 date_end = date.today()
 date_start = date_end - timedelta(days = date_num - 1 )
+date_start = date(2016, 3, 1) if date_start < date(2016, 3, 1) else date_start
 date_temp = date_start
 
 
