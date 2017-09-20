@@ -24,8 +24,10 @@ while 1:
     s=input("input the date number:")
     try:
         if s=="" or s=='0':
-            print("input must not be empty or 0.") 
+            print("input must not be empty or 0...") 
             #raise Exception("input must not be empty.")
+        elif int(s) >= 1000:
+            print("This number is too big, Try numbers less than 1000...")       
         else:
             date_num=int(s)
             break
@@ -36,7 +38,7 @@ while 1:
 
 date_end = date.today()
 date_start = date_end - timedelta(days = date_num - 1 )
-date_start = date(2016, 3, 1) if date_start < date(2016, 3, 1) else date_start
+#date_start = date(2016, 3, 1) if date_start < date(2016, 3, 1) else date_start
 date_temp = date_start
 
 
@@ -83,7 +85,10 @@ for i in date_list:
     x_list = []
     x_list.append(i)
     for ii in type_list:
-        x_list.append(indexed_all[i][ii])
+        if ii in indexed_all[i]:
+            x_list.append(indexed_all[i][ii])
+        else:
+            x_list.append('-')
     x.add_row(x_list)
 print(x) 
 
