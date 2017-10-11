@@ -60,7 +60,7 @@ def all_site(resp_all):
 
     for text_single in text_all:
         text_new = str(text_single.get_text()).strip().replace('\n','').replace(' ','').replace(',','')
-        if re.match(r'^神马收录', text_new) or re.match(r'^找到约', text_new) or re.match(r'^找到相关结果', text_new) or re.match(r'^该网站共有', text_new):
+        if re.match(r'^神马收录', text_new) or re.match(r'^找到约', text_new) or re.match(r'^该网站约', text_new) or re.match(r'^该网站共有', text_new):
 #            print(text_new)
             number = int(re.search(r'\d+',text_new).group(0))
 #            print(number)
