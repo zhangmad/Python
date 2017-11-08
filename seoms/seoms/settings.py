@@ -82,8 +82,10 @@ DATABASES = {
         'NAME': 'test',
         'USER': 'test',
         'PASSWORD':'1234abcd',
-        'HOST':'127.0.0.1',
-        'PORT':'3306',        
+        'HOST':'zhangmad.vicp.net',
+        'PORT':'3310',        
+#        'HOST':'127.0.0.1',
+#        'PORT':'3306',        
     }
 }
 
