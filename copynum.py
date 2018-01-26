@@ -14,19 +14,18 @@ conn = pymysql.connect(
 
 cursor = conn.cursor()
 
-cursor.execute('select Site, Domain, URL, Indexed from indexed where date = "2017-09-01"')
+cursor.execute('select Site, Domain, URL, Indexed from indexed where date = "2018-01-08"')
 
 data = cursor.fetchall()
 
 print(data)
 
-#cursor.executemany('insert into indexed (Site, Domain, URL, Indexed, Date) values(%s,%s,%s,%s,"2017-09-02")', (data))
-#cursor.executemany('insert into indexed (Site, Domain, URL, Indexed, Date) values(%s,%s,%s,%s,"2017-09-03")', (data))
-
-
+# cursor.executemany('insert into indexed (Site, Domain, URL, Indexed, Date) values(%s,%s,%s,%s,"2018-01-09")', (data))
+# cursor.executemany('insert into indexed (Site, Domain, URL, Indexed, Date) values(%s,%s,%s,%s,"2018-01-10")', (data))
+# cursor.executemany('insert into indexed (Site, Domain, URL, Indexed, Date) values(%s,%s,%s,%s,"2018-01-11")', (data))
 
 print(cursor.rowcount)
 
-#conn.commit()
+# conn.commit()
 cursor.close()
 conn.close()
